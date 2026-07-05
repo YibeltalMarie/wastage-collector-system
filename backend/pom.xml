@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        PARENT: Inherit Spring Boot defaults.
+        This manages versions for all Spring libraries automatically.
+        Spring Boot 3.2.x is the LTS-aligned version for Java 21.
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.5</version>
+        <relativePath/>
+    </parent>
+
+    <!-- PROJECT IDENTITY -->
+    <groupId>com.wastecollector</groupId>
+    <artifactId>api</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>waste-collector-api</name>
+    <description>Waste Collector Ethiopia — Backend API</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+
+        <!-- ═══════════════════════════════════════════════════════
+             SPRING BOOT STARTERS
+             Each starter is a curated bundle of related libraries.
+             You add one dependency, you get a complete feature set.
+        ════════════════════════════════════════════════════════ -->
+
+        <!--
+            WEB: Spring MVC + embedded Tomcat + Jackson (JSON)
+            This is what makes your app a web server.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--
+            SECURITY: Spring Security + BCrypt password encoder
+            Locks every endpoint by default.
+            You then open up what should be public.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!--
+            DATA JPA: Hibernate ORM + Spring Data + transactions
+            Maps Java classes to database tables.
+            Generates SQL from method names automatically.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!--
+            VALIDATION: @NotBlank @NotNull @Email @Size etc.
+            Add @Valid to a controller method and Spring validates
+            the request body automatically before it reaches your code.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════════
+             DATABASE
+        ════════════════════════════════════════════════════════ -->
+
+        <!--
+            POSTGRESQL DRIVER: the connector between Java and PostgreSQL.
+            scope=runtime because you never import PostgreSQL classes
+            directly — JPA abstracts the database for you.
+        -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--
+            FLYWAY: database migration tool.
+            Runs SQL files (V1, V2, V3...) in order on startup.
+            Tracks what has already run — never runs the same file twice.
+            This is how you safely evolve your schema over time.
+        -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <version>10.10.0</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════════
+             JWT AUTHENTICATION
+             Three jars work together as one unit.
+        ════════════════════════════════════════════════════════ -->
+
+        <!-- API: the interfaces — you import these in your code -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.12.3</version>
+        </dependency>
+        <!-- IMPL: the implementation — loaded at runtime, never imported directly -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.3</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- JACKSON: JSON serialization for JWT — runtime only -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.12.3</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════════
+             API DOCUMENTATION
+        ════════════════════════════════════════════════════════ -->
+
+        <!--
+            SWAGGER / OPENAPI: reads your controllers and generates
+            interactive API documentation automatically at /swagger-ui.html
+        -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════════
+             DEVELOPER EXPERIENCE
+        ════════════════════════════════════════════════════════ -->
+
+        <!--
+            DEVTOOLS: hot reload on file change.
+            Only active in development — excluded from production jar.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!--
+            LOMBOK: generates boilerplate at compile time.
+            @Data → getters + setters + equals + hashCode + toString
+            @Builder → fluent builder pattern
+            @Slf4j → injects a logger field
+            @RequiredArgsConstructor → constructor for final fields
+        -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- ═══════════════════════════════════════════════════════
+             TESTING
+        ════════════════════════════════════════════════════════ -->
+
+        <!--
+            TEST STARTER: JUnit 5 + Mockito + AssertJ + Spring Test.
+            scope=test — never included in production jar.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--
+            SECURITY TEST: @WithMockUser, security mock helpers.
+            For testing secured endpoints without real authentication.
+        -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!--
+                SPRING BOOT MAVEN PLUGIN:
+                1. Builds the executable "fat jar" with all dependencies inside
+                2. Enables: mvn spring-boot:run
+                Lombok is excluded from the final jar (only needed at compile time)
+            -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!--
+                MAVEN COMPILER PLUGIN:
+                Compiles your Java source code.
+                annotationProcessorPaths registers Lombok so it
+                generates code during compilation.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.32</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

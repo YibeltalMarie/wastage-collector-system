@@ -1,0 +1,54 @@
+User/React              JwtAuthFilter         SecurityContext      UserDetailsService      Database
+    │                         │                       │                    │                │
+    │  POST /api/auth/login    │                       │                    │                │
+    │  {email, password}       │                       │                    │                │
+    ├────────────────────────►│                       │                    │                │
+    │                         │                       │                    │                │
+    │                         │  Pass to AuthController (bypasses filter)    │                │
+    │                         │                       │                    │                │
+    │                         │                       │  loadUserByUsername│                │
+    │                         │                       ├───────────────────►│                │
+    │                         │                       │                    │  SELECT * FROM │
+    │                         │                       │                    │  users WHERE   │
+    │                         │                       │                    │  email = ?     │
+    │                         │                       │                    ├───────────────►│
+    │                         │                       │                    │◄───────────────┤
+    │                         │                       │◄───────────────────┤                │
+    │                         │                       │                    │                │
+    │                         │  AuthenticationManager verifies password   │                │
+    │                         │  (BCrypt.matches)                          │                │
+    │                         │                       │                    │                │
+    │                         │  Generate JWT token   │                    │                │
+    │                         │                       │                    │                │
+    │  {token: "eyJ..."}      │                       │                    │                │
+    │◄────────────────────────┤                       │                    │                │
+    │                         │                       │                    │                │
+    │                         │                       │                    │                │
+    │  GET /api/pickups       │                       │                    │                │
+    │  Authorization: Bearer  │                       │                    │                │
+    │  eyJ...                 │                       │                    │                │
+    ├────────────────────────►│                       │                    │                │
+    │                         │                       │                    │                │
+    │                         │  Extract token        │                    │                │
+    │                         │  Validate signature   │                    │                │
+    │                         │  Extract email        │                    │                │
+    │                         │                       │                    │                │
+    │                         │                       │ loadUserByUsername│                │
+    │                         │                       ├───────────────────►│                │
+    │                         │                       │                    │ SELECT FROM    │
+    │                         │                       │                    │ users          │
+    │                         │                       │                    ├───────────────►│
+    │                         │                       │                    │◄───────────────┤
+    │                         │                       │◄───────────────────┤                │
+    │                         │                       │                    │                │
+    │                         │  Create Authentication object               │                │
+    │                         │  Store in SecurityContext                   │                │
+    │                         │                       │                    │                │
+    │                         │  Forward to controller                      │                │
+    │                         ├───────────────────────────────────────────────►                │
+    │                         │                       │                    │   Controller   │
+    │                         │                       │                    │   uses @Auth   │
+    │                         │                       │                    │   Principal    │
+    │  Response (pickups)     │                       │                    │                │
+    │◄────────────────────────┼───────────────────────────────────────────────┤                │
+    │                         │                       │                    │                │
