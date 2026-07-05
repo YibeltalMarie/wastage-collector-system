@@ -1,0 +1,1 @@
+# wastage-collector-system
